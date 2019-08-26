@@ -36,6 +36,15 @@ authors:
       bio:            "UCL admin team"
       email:          aicentre@cs.ucl.ac.uk
       twitter:        https://twitter.com/uclaicentre
+
+    harshil:
+      name:           harshil
+      site:           
+      avatar:         /assets/images/avatar1.jpg
+      bio:            "Harshil Shah is a PhD student at the UCL AI Centre"
+      email:          
+      twitter:        
+
  
 # Defaults
 defaults:
