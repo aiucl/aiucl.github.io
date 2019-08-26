@@ -11,6 +11,8 @@ email: 'aicentre@cs.ucl.ac.uk'
 include: ["_pages"]
 permalink: /:title/
 
+future: true
+
 # Plugins
 plugins: 
   - jekyll-feed
