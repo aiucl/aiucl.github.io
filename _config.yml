@@ -31,9 +31,9 @@ authors:
 
     admin:
       name:           admin
-      site:           https://ai.cs.ucl.ac.uk
-      avatar:         /assets/images/avatar2.png
-      bio:            "Hard working UCL admin!"
+      site:           
+      avatar:         /assets/images/avatar2.jpg
+      bio:            "UCL admin team"
       email:          aicentre@cs.ucl.ac.uk
       twitter:        https://twitter.com/uclaicentre
  
