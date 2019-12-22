@@ -140,7 +140,7 @@ $$
 
 Interestingly, this condition on the kernel is equivalent to the condition on the kernel in the MMD framework[^Gretton], which is an alternative way to define a divergence between distributions. It is easy to show that the Gaussian distribution has strictly positive Fourier Transform and thus defines a valid spread divergence. Another useful spread distribution with this property is the Laplace distribution.
 
-We discussed the above in the context of the KL divergence, but the argument also holds for the more general class of $f$-divergences, broadening the class of training objectives now available to train deterministic output generative models.
+We discussed the above in the context of the KL divergence, but the argument also holds for the more general class of $$f$$-divergences, broadening the class of training objectives now available to train deterministic output generative models.
 
 ### Machine Learning Applications
 {:.no_toc}
