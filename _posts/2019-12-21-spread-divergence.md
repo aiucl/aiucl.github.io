@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Training Models that have Zero Likelihood"
-categories: [Optimisation]
+categories: [Optimization]
 image: assets/images/celeba_spread_learned_5.png
 tags: [featured]
 author: davidbarber
