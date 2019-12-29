@@ -10,7 +10,7 @@ author: davidbarber
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 
 
-A popular class of models in machine learning is the so-called generative model class with deterministic outputs. These are currently heavily used for example the generation of realistic images. If we represent an image with the variable $$x$$, then these models generate an image by the following process:
+A popular class of models in machine learning is the so-called generative model class with deterministic outputs. These are currently used for example in the generation of realistic images. If we represent an image with the variable $$x$$, then these models generate an image by the following process:
 
 1. Sample $$z$$ from a $$Z$$ dimensional Gaussian (multivariate-normal) distribution.
 
@@ -25,13 +25,13 @@ $$
 p(x) = \int p(x\vert{}z)p(z)dz
 $$
 
-and $$p(x\vert{}z)$$ restricted to a deterministic distribution
+and $$p(x\vert{}z)$$ restricted to a deterministic distribution so that
 
 $$
 p_\theta(x) = \int \delta\left(x-g_\theta(z)\right)p(z)dz, 
 $$
 
-where we write $$p_\theta(x)$$ to emphasise that the model depends on the parameters $$\theta$$ of the network. These models are powerful because they represent a very rich class of distributions (thanks to the highly non-linear neural network) but that are also easy to sample from (using the above procedure).
+where we write $$p_\theta(x)$$ to emphasise that the model depends on the parameters $$\theta$$ of the network. These models represent a rich class of distributions (thanks to the highly non-linear neural network) and are also easy to sample from (using the above procedure).
 
 So what's the catch? Given a set of training images, $$x^1,\ldots,x^N$$, the challenge is to learn the parameters $$\theta$$ of the network $$g_\theta$$.
 
@@ -39,7 +39,7 @@ So what's the catch? Given a set of training images, $$x^1,\ldots,x^N$$, the cha
 <img src="{{ site.url }}/assets/images/sd-crop.png" width="250">
 
 
-Because the latent dimension $$Z$$ is lower than the observation dimension $$X$$, the model can only generate images in a $$Z$$ dimensional manifold within the $$X$$ dimensional image space, as depicted in the figure for a latent dimension $$Z=2$$ and observed dimension $$X=3$$. That means that only images that lie on this manifold will have non-zero probability density value. For an image $$x^n$$ from the training dataset, unless it lies exactly on the manifold, the likelihood of this image $$q_\theta(x^n)$$ will be zero. This means that typically the log likelihood of the dataset
+Because the latent dimension $$Z$$ is lower than the observation dimension $$X$$, the model can only generate images in a $$Z$$ dimensional manifold within the $$X$$ dimensional image space, as depicted in the figure for a latent dimension $$Z=2$$ and observed dimension $$X=3$$. That means that only images that lie on this manifold will have non-zero probability density value. For an image $$x^n$$ from the training dataset, unless it lies exactly on the manifold, the likelihood of this image $$p_\theta(x^n)$$ will be zero. This means that typically the log likelihood of the dataset
 
 $$
 L(\theta) \equiv \sum_{n=1}^N \log p_\theta(x^n)
@@ -97,7 +97,7 @@ $$
 \tilde{p}(y) = \int p(y{\mid}x)p(x)dx, \hspace{1cm} \tilde{q}(y) = \int p(y{\mid}x)q(x)dx
 $$
 
-where $$p(y{\mid}x)$$ `spreads' the mass of $$p$$ and $$q$$ and is chosen such that $$\tilde{p}$$ and $$\tilde{q}$$ have the same support.
+where $$p(y{\mid}x)$$ 'spreads' the mass of $$p$$ and $$q$$ and is chosen such that $$\tilde{p}$$ and $$\tilde{q}$$ have the same support.
 
 Consider the extreme case of two delta distributions  
 
@@ -108,13 +108,13 @@ $$
 for which $$KL(p\vert q)$$ is not well defined. Using a Gaussian spread distribution $$p(y{\mid}x)={\mathcal{N}}(y;x,\sigma^2)$$ with mean $$x$$ and variance $$\sigma^2$$ ensures that $$\tilde{p}$$ and $$\tilde{q}$$ have common support $$\mathbb{R}$$. Then
 
 $$
-\tilde{p}(y)=\int \delta(x-\mu_p)\mathcal{N}(y;x,\sigma^2)dx=\mathcal{N}(y;\mu_p,\sigma^2)
+\tilde{p}(y)=\int \mathcal{N}(y;x,\sigma^2)dx\delta(x-\mu_p)=\mathcal{N}(y;\mu_p,\sigma^2)
 $$
 
 and
 
 $$
-\tilde{q}(y)=\int \delta(x-\mu_q)\mathcal{N}(y;x,\sigma^2)dx=\mathcal{N}(y;\mu_q,\sigma^2)
+\tilde{q}(y)=\int \mathcal{N}(y;x,\sigma^2)dx\delta(x-\mu_q)=\mathcal{N}(y;\mu_q,\sigma^2)
 $$
 
 and the KL divergence between the two becomes
@@ -123,24 +123,22 @@ $$
 KL(\tilde{p}\vert \tilde{q})=\frac{1}{2\sigma^2}||\mu_p-\mu_q||_2^2
 $$
 
-This divergence is well defined for all values of $$\mu_p$$ and $$\mu_q$$. Indeed, this divergence has the convenient property that $$KL(\tilde{p}\vert \tilde{q})=0 \Rightarrow p=q$$. If we consider $$p$$ to be our data distribution (a single datapoint at $$\mu_p$$) and $$q$$  our model, we can now do a modified version of maximum likelihood training to fit $$p_\theta$$ to $$p$$ -- instead of minimising $$KL(p\vert p_\theta)$$, we minimise $$KL(\tilde{p}\vert \tilde{p}_\theta)$$.
+This divergence is well defined for all values of $$\mu_p$$ and $$\mu_q$$. Indeed, this divergence has the convenient property that $$KL(\tilde{p}\vert \tilde{q})=0 \Rightarrow p=q$$. If we consider $$p$$ to be our data distribution (a single datapoint at $$\mu_p$$) and $$q$$  our model $$p_\theta$$, we can now do a modified version of maximum likelihood training to fit $$p_\theta$$ to $$p$$ -- instead of minimising $$KL(p\vert p_\theta)$$, we minimise $$KL(\tilde{p}\vert \tilde{p}_\theta)$$.
 
 
-Note that, in general, we must spread both distributions $$p$$ and $$p_\theta$$ for the divergence between the spreaded distributions to be zero to imply that the original distributions are the same. In the context of maximum likelihood learning, spreading only one of these distributions will in general result in a biased estimator of the underlying model. 
+Note that, in general, we must spread both distributions $$p$$ and $$q$$ for the divergence between the spreaded distributions to be zero to imply that the original distributions are the same. In the context of maximum likelihood learning, spreading only one of these distributions will in general result in a biased estimator of the underlying model. 
 
 ### Stationary Spread Divergence
 {:.no_toc}
 
 
-If we consider stationary spread distributions of the form $$p(y\vert x)=K(y-x)$$, for `kernel' function $$K(x)$$. It is straightforward to show that if the kernel $$K(x)$$ has strictly positive Fourier Transform, then
+If we consider stationary spread distributions of the form $$p(y\vert x)=K(y-x)$$, for 'kernel' function $$K(x)$$. It is straightforward to show that if the kernel $$K(x)$$ has strictly positive Fourier Transform, then
 
 $$
 D_f(\tilde{p}\vert \tilde{q}) = 0 \Rightarrow p=q
 $$
 
 Interestingly, this condition on the kernel is equivalent to the condition on the kernel in the MMD framework[^Gretton], which is an alternative way to define a divergence between distributions. It is easy to show that the Gaussian distribution has strictly positive Fourier Transform and thus defines a valid spread divergence. Another useful spread distribution with this property is the Laplace distribution.
-
-We discussed the above in the context of the KL divergence, but the argument also holds for the more general class of $$f$$-divergences, broadening the class of training objectives now available to train deterministic output generative models.
 
 ### Machine Learning Applications
 {:.no_toc}
@@ -171,16 +169,15 @@ $$
 \tilde{p}(y) = \frac{1}{N}\sum_{n=1}^N \mathcal{N}(y;x^n,\sigma^2 I_X)
 $$
 
-The objective is then simply an expectation over the log likelihood $$\log \tilde{p}_\theta(y)$$, a quantity itself which is well defined since
+The objective is then simply an expectation over the log likelihood $$\log \tilde{p}_\theta(y)$$, 
 
 $$
 \tilde{p}_\theta(y) = \int p(y\vert x)p_\theta(x)dx = \int \mathcal{N}(y; g_\theta(z),\sigma^2 I_X)p(z)dz
 $$
 
-which is itself a standard generative model with a Gaussian output distribution.  For this we may now use a variational training approach to form a lower bound on the quantity $$\log \tilde{p}_\theta(y)$$. The final objective just then requires evaluating the expectation of this bound, which can be easily approximated by sampling from the spreaded data distribution
+which is a standard generative model with a Gaussian output distribution.  For this we may now use a variational training approach to form a lower bound on the quantity $$\log \tilde{p}_\theta(y)$$. The final objective just then requires evaluating the expectation of this bound, which can be easily approximated by sampling from the spreaded data distribution.
 
-Overall, this is therefore a simple modification of standard Variational Autoencoder (VAE) training in which there is an additional outer loop sampling from the spreaded data distribution. Our aim isn't to produce the most impressive face sampler, but rather to show how one can make a fairly simple modification of the standard training algorithm to cope with deterministic outputs.
-
+Overall, this is therefore a simple modification of standard Variational Autoencoder (VAE) training in which there is an additional outer loop sampling from the spreaded data distribution[^SD].
 
 In the figure below we show how we are able to fit a deep generative 4 layer convolutional network with deterministic output to the CelebA dataset of face images. Whilst this model cannot be trained using standard VAE approaches, using the spread divergence approach and sampling from the trained model gives images of the form below
 
@@ -188,12 +185,15 @@ In the figure below we show how we are able to fit a deep generative 4 layer con
 {:.text-center img}
 <img src="{{ site.url }}/assets/images/celeba_spread_learned_5.png" width="350">
 
-In our paper[^SD] we apply this method to similarly how to overcome well known problems in training deterministic Independent Components Analysis models using only a simple modification of the standard training algorithm. We also discuss how to learn the spread distribution.
+Our aim isn't to produce the most impressive face sampler, but rather to show how one can make a fairly simple modification of the standard training algorithm to cope with deterministic outputs.
+
+
+In our paper[^SD] we apply this method to show how to overcome well known problems in training deterministic Independent Components Analysis models using only a simple modification of the standard training algorithm. We also discuss how to learn the spread distribution and how this relates to other approaches such as MMD and GANs.
 
 ## Summary
 {:.no_toc}
 
-A popular class of generative deep network models cannot be trained using standard classical machine learning approaches. However, by adding `noise' to both the model and the data in an appropriate way, one can nevertheless define an appropriate objective that is amenable to standard machine learning training approaches.
+A popular class of generative deep network models cannot be trained using standard classical machine learning approaches. However, by adding 'noise' to both the model and the data in an appropriate way, one can nevertheless define an appropriate objective that is amenable to standard machine learning training approaches.
 
 
 ### References
