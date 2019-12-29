@@ -120,7 +120,7 @@ $$
 and the KL divergence between the two becomes
 
 $$
-KL(\tilde{p}\vert \tilde{q})=\frac{1}{2\sigma^2}||\mu_p-\mu_q||_2^2
+KL(\tilde{p}\vert \tilde{q})=\frac{1}{2\sigma^2}(\mu_p-\mu_q)^2
 $$
 
 This divergence is well defined for all values of $$\mu_p$$ and $$\mu_q$$. Indeed, this divergence has the convenient property that $$KL(\tilde{p}\vert \tilde{q})=0 \Rightarrow p=q$$. If we consider $$p$$ to be our data distribution (a single datapoint at $$\mu_p$$) and $$q$$  our model $$p_\theta$$, we can now do a modified version of maximum likelihood training to fit $$p_\theta$$ to $$p$$ -- instead of minimising $$KL(p\vert p_\theta)$$, we minimise $$KL(\tilde{p}\vert \tilde{p}_\theta)$$.
