@@ -1,0 +1,149 @@
+---
+layout: post
+title: "AI Coworkers"
+categories: [Optimization]
+image: assets/images/ham_class_prob.jpg
+tags: [featured]
+author: davidbarber
+---
+
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
+
+<!--Training machine learning requires currently a lot of labelled data.-->
+
+We argue for a more interactive approach in which AI systems function more like coworkers. For them to be effective in this role, they need to have reasonable estimates of confidence in their predictions, giving them an opportunity to learn and for humans to gain trust.
+
+### Building a better catflap
+{:.no_toc}
+
+
+We start with a story about a man that wants to build a better catflap. The story highlights some of the amazing things one can do with machine learning, but also things that are wrong with the way AI systems are trained.
+
+Ben Hamm wants to [build a better catflap](https://www.youtube.com/watch?v=1A-Nf3QIJjM): 
+
+{:.text-center img}
+<img src="{{ site.url }}/assets/images/ham_stage.jpg" width="750">
+
+His cat often catches prey during the night, and wants to bring them into the house:
+
+
+{:.text-center img}
+<img src="{{ site.url }}/assets/images/ham_prey.jpg" width="750">
+
+
+His idea is to use a camera that can monitor the ramp up to the catflap
+
+
+{:.text-center img}
+<img src="{{ site.url }}/assets/images/ham_camera.jpg" width="750">
+
+<!--{:.text-center img}
+<img src="{{ site.url }}/assets/images/ham_arduino.jpg" width="750">-->
+
+and then block the catflap if the cat is carrying prey. Over several months his camera captures 23,000 images of his cat. He laboriously hand labels each of these 23,000 images to provide training data ...
+
+{:.text-center img}
+<img src="{{ site.url }}/assets/images/ham_labels.jpg" width="750">
+
+... and uses them to train deep neural networks to detect whether his cat is on the ramp with prey. Ben is not a machine learning expert, but is able to use the great free tools available.
+
+The new catflap works pretty well during 5 weeks of testing. It correctly let the cat in 179 times  (just one time unfairly locked out) and, of 5 times that the cat brought home prey, it was successfully blocked from entering 4 times:
+
+{:.text-center img}
+<img src="{{ site.url }}/assets/images/ham_test.jpg" width="750">
+
+
+{:.text-center img}
+<img src="{{ site.url }}/assets/images/ham_blocked.jpg" width="750">
+
+### What's wrong with current Machine Learning?
+
+Whilst the above story shows how far machine learning has come, it also highlights some of the current issues with machine learning:
+
+1. Labelling training data by hand is very laborious and time-consuming. This is perhaps one of the biggest bottlenecks faced in industry in training machine learning models.
+
+2. We need a lot of labelled training data to train a deep neural network.
+
+{% comment %}3. The trained system works well for Ben's cat and cat ramp, but how well will it generalise to other cats and environments? {% endcomment %}
+
+3. Some problems are relatively easy for inexperienced humans to label (for example whether a cat has a bird in its mouth). However, others (for example medical diagnosis of CT scans) may not be and the number of human experts available to provide labels is scarce and labelling very expensive.
+
+
+### Active Learning
+
+
+The standard paradigm in training machine learning systems is (like Ben did) to collect a set of data and then get people to label them, either in-house (if the data is sensitve) or externally (for example by using Amazon's Mechanical Turk).
+
+Ben did the labelling 'in-house' (himself). However, did Ben really need to label all 23,000 of those images?  An alternative approach is to use so-called Active Learning that selects only a subset of the training data that needs to be labelled. Whilst this has been around for some time, it has still not permeated deeply into mainstream industry practice.
+
+We will assume that, as in Ben's scenario, we have plenty of data (eg images), but we don't have labels for them.
+<!--Instead of getting Ben to label each of the 23,000 images by hand, AL starts with getting Ben to label a small number of images.-->
+
+1. In Active Learning, one starts with a small amount of labelled data to train an inital model.
+
+2. The trained model then looks at the remaining unlabelled images. Some of the images will be similar to those that the model has already seen labelled data for and it will therefore be confident in its prediction. There is no need for these images to be labelled by the human. However, for images that are quite different from those that have been currently labelled by a human, the machine is likely to be less confident in its prediction. There are many different criteria that can be used by the machine to select which images it would like to label, but most rely on using the machine's estimate of its certainty in its prediction. For example, images for which the machine is least confident in its prediction are passed to the human for labelling.
+
+3. The human labels these (machine chosen) datapoints.
+
+4. After labelling, the model is retrained (on all labelled data).
+
+5. The process (steps 2 to 4) repeats until convergence.
+
+In this way the machine plays an active role in selecting which data it believes is useful for the human to label. This approch can be quite effective, to the point that only a small fraction of the data may need to be labelled in order to get predictive performance close to that which would be obtained from labelling the whole dataset. 
+
+
+#### Uncertainty : The potential Achilles Heel
+
+Whilst Active Learning holds great promise to drastically reduce the need to label a large amount of data, it does come with some risks. If the machine's estimate of its predictive uncertainty is poor, then the machine will select examples that are not appropriate and the machine will never see the labels it needs to generalise well.
+<!--For this reason for Active Learning to be effective, the machine needs a reasonable estimate of its uncertainty.-->
+
+
+Similarly, once trained and deployed, if we want to use our AI systems as smart coworkers, we need to trust their judgements, knowing when the AI system is not confident in its prediction. Imagine a human coworker that is arrogantly overconfident in their predictions. Sometimes they will be correct, but other times confidently predict the wrong answer. Being overconfident (when they shouldn't be) means that a vital opportunity to learn is lost. Humans in the workplace are highly sensitive to overconfident individuals since arrogance is rarely appreciated(!) and ignorance can result in valuable opportunities to learn and better understand being lost.
+
+<!--This is important both when the model is deployed and used on a daily basis and also during its training phase (if using Active Learning).-->
+
+Many of the recent research trends in Deep Learning have not focussed on providing good estimates of uncertainty in the preditions.  In the classification context, its standard for a deep network to output a class probability $$p(c\vert{}x,\theta)$$ where $$x$$ is the input and $$\theta$$ are the weights of the network. For example, the network might output $$p(c=`cat'\vert{}\text{input image},\theta)=0.8$$, and this can be taken as a measure of the prediction uncertainty. However, this  uncertainty is based on  *assuming that the network model is correct*. Since we may have only a small amount of data, then our confidence that the network weights $$\theta$$ are appropriate may itself be low (parameter uncertainty). Similarly, the network architecture itself may not be confidendently determined (structural uncertainty). There have been attempts to incorporate such uncertainty into the predictions (for example Bayesian approaches or using a committee of networks trained on different datasets) and these can be helpful in producing better estimates of prediction uncertainty.
+
+
+#### Active Learning with an image classifier
+
+{:.text-center img}
+<img src="{{ site.url }}/assets/images/activelearning.png" width="550">
+
+The above figure shows the test accuracy of a model trained to predict the famous MNIST postcode digits. There are 60,000 images of handwritten digits (each image represents a digit from 0 to 9). When trained on the full dataset of labelled images, machines can reach prediction accuracies above 98%. The figure shows the progress of Active Learning, with the x-axis showing the number of labelled examples used so far; the y-axis is the prediction accuracy on a test set. There are three approaches used to select the next training datapoint, with each network being retained after receiving a new datapoint.
+
+1. [orange] The random baseline simply selects datapoints at random to label. This can often be quite effective if the predictor does not provide a good estimate of its own uncertainty.
+
+2. [blue] The entropy baseline uses a standard deep network, with datapoints for Active Learning selected on the basis of the uncertainty in the softmax neural network prediction. This is a limited estimate of the uncertainty in the prediction and means that the Active Learning process does not select good examples to be labelled.
+
+3. [green] This is a Bayesian approach that takes parameter uncertainty into consideration. This gives  a better estimate of the prediction uncertainty, meaning that Active Learning selects much better examples to be labelled. After training on only around 500 labelled datapoints, the test accuracy is comparable to standard training using 60,000 labelled examples in the full training set.
+
+Whilst not yet commonplace, companies such as [re:infer](https://reinfer.io/) sucessfully use Active Learning and Natural Language Understanding to help customers rapidly train AI systems to derive insights from communications data and facilitate Robotic Process Automation. This is key to helping rapidly onboard new clients and get their systems up and running, without needing costly and lenghty data labelling sessions. 
+
+
+### Weak Learning
+
+[Humanloop.com](https://humanloop.ml/) is another noteworthy recent UCL spinout that provides a data labelling platform to more rapidly train models using Active and Weak Learning.
+
+
+
+
+## Summary
+{:.no_toc}
+
+A popular class of generative deep network models cannot be trained using standard classical machine learning approaches. However, by adding 'noise' to both the model and the data in an appropriate way, one can nevertheless define an appropriate objective that is amenable to standard machine learning training approaches.
+
+
+
+In our paper[^SD] we apply this method to show how to overcome well known problems in training deterministic Independent Components Analysis models using only a simple modification of the standard training algorithm. We also discuss how to learn the spread distribution and how this relates to other approaches such as MMD and GANs.
+
+
+
+
+### References
+{:.no_toc}
+
+
+[^SD]: M. Zhang, P. Hayes, T. Bird, R. Habib, D. Barber. Spread Divergence. [arxiv.org/abs/1811.08968](https://arxiv.org/abs/1811.08968), 2018.
+
