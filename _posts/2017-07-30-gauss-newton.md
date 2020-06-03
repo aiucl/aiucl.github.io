@@ -7,9 +7,12 @@ tags: [featured]
 author: davidbarber
 ---
 
+Did you know that feedforward Neural Nets (with piecewise linear transfer functions) have no smooth local maxima? 
+
+<!--more-->
+
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 
-Did you know that feedforward Neural Nets (with piecewise linear transfer functions) have no smooth local maxima? 
 
 In our recent ICML paper [Practical Gauss-Newton Optimisation for Deep Learning](http://proceedings.mlr.press/v70/botev17a.html)) we discuss a second order method that can be applied successfully to accelerate training of Neural Networks. However, here I want to discuss some of the fairly straightforward, but perhaps interesting, insights into the geometry of the error surface that that work gives.
 

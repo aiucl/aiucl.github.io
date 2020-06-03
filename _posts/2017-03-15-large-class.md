@@ -7,9 +7,14 @@ tags: [featured]
 author: davidbarber
 ---
 
+In machine learning we often face the issue of a very large number of classes in a classification problem. This causes a bottleneck in the computation. There's though a simple and effective way to deal with this. 
+
+
+<!--more-->
+
+
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 
-In machine learning we often face the issue of a very large number of classes in a classification problem. This causes a bottleneck in the computation. There's though a simple and effective way to deal with this. 
 
 ## Probabilistic Classification
 {:.no_toc}
