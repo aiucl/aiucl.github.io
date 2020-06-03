@@ -7,8 +7,11 @@ tags: [featured]
 author: davidbarber
 ---
 
-<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+How can we train generative models when we cannot calculate a gradient likelihood?
 
+<!--more-->
+
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 
 A popular class of models in machine learning is the so-called generative model class with deterministic outputs. These are currently used for example in the generation of realistic images. If we represent an image with the variable $$x$$, then these models generate an image by the following process:
 
